@@ -6,10 +6,6 @@ import java.util.ArrayList;
 public class RuleGenerator {
 
 	public static void main(String[] args){
-		System.out.println("Distance: "+RuleGenerator.distance("kitten", "sitting"));
-		System.out.println("Distance: "+RuleGenerator.distance("microsoft", "nicosooft"));
-		System.out.println("Distance: "+RuleGenerator.distance("saturday", "sunday"));
-		
 		try{
 			List<Rule> ruleList=RuleGenerator.generateRule("kitten", "sitting");
 			for(int i=0;i<ruleList.size();i++){
@@ -34,8 +30,11 @@ public class RuleGenerator {
 		}
 	}
 	
-	public static List<Rule> generateRule(String s1,String s2) throws Exception
+	public static List<Rule> generateRule(final String s1,final String s2) throws Exception
 	{
+		String copyS1=new String(s1);
+		String copyS2=new String(s2);
+		
 		List<Rule> ruleList=new ArrayList<Rule>();
 		int[][] d=new int[s1.length()+1][s2.length()+1];
 
@@ -55,19 +54,24 @@ public class RuleGenerator {
 			}
 		}
 		
-		int i=s1.length(),j=s2.length();
+		//align string
+		int i=s1.length(),j=s2.length(),counterForExtraStringOfs1=0,counterForExtraStringOfs2=0;
 		int prev=d[s1.length()][s2.length()];
 		while(i>=1 && j>=1){
 			if(d[i-1][j]==(prev-1)){ //deletion
-				ruleList.add(new Rule(String.valueOf(s1.charAt(i-1)),"#"));
+				//ruleList.add(new Rule(String.valueOf(s1.charAt(i-1)),"#"));
+				copyS2=copyS2.substring(0, i-1+counterForExtraStringOfs2)+"#"+copyS2.substring(i-1+counterForExtraStringOfs2);
+				counterForExtraStringOfs2++;
 				prev--;
 				i--;
 			}else if(d[i][j-1]==(prev-1)){ //insertion
-				ruleList.add(new Rule("#",String.valueOf(s2.charAt(j-1))));
+				//ruleList.add(new Rule("#",String.valueOf(s2.charAt(j-1))));
+				copyS1=copyS1.substring(0, j-1+counterForExtraStringOfs1)+"#"+copyS1.substring(j-1+counterForExtraStringOfs1);
+				counterForExtraStringOfs1++;
 				prev--;
 				j--;
 			}else if(d[i-1][j-1]==(prev-1)){ //substitution
-				ruleList.add(new Rule(String.valueOf(s1.charAt(i-1)),String.valueOf(s2.charAt(j-1))));
+				//ruleList.add(new Rule(String.valueOf(s1.charAt(i-1)),String.valueOf(s2.charAt(j-1))));
 				i--;
 				j--;
 				prev--;
@@ -82,10 +86,36 @@ public class RuleGenerator {
 				throw new Exception("An unexpected case!");
 			}
 		}
+
+		if(copyS1.length()!=copyS2.length())
+			throw new Exception("Strings' lengths are not matched!");
+		
+		copyS1="^"+copyS1+"$";
+		copyS2="^"+copyS2+"$";
+		
+		//create rule list including expanded rules
+		for(int x=0;x<copyS1.length();x++){
+			if(copyS1.charAt(x)!=copyS2.charAt(x)){
+				ruleList.add(new Rule(String.valueOf(copyS1.charAt(x)),String.valueOf(copyS2.charAt(x))));
+				int N=2;
+				for(int y=N;y>0;y--){
+					int a=0,b=y;
+					while(Math.abs(a)<=b){
+						if(x+a>=0 && x+b<copyS1.length())
+							ruleList.add(new Rule(copyS1.substring(x+a, x+b+1).replace("#", ""),copyS2.substring(x+a, x+b+1).replace("#", "")));
+						if(Math.abs(a)!=b && x-b>=0 && x-a<copyS1.length()){
+							ruleList.add(new Rule(copyS1.substring(x-b,x-a+1).replace("#",""),copyS2.substring(x-b, x-a+1).replace("#","")));
+						}
+						a--;
+						b--;
+					}
+				}
+			}
+		}
 		
 		return ruleList;
 	}
-	
+
 	public static int distance(String s1,String s2){		
 		int[][] d=new int[s1.length()+1][s2.length()+1];
 		
@@ -107,5 +137,4 @@ public class RuleGenerator {
 		
 		return d[s1.length()][s2.length()];
 	}
-	
 }
