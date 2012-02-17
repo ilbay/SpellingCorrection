@@ -18,6 +18,11 @@ public class Rule {
 		return false;
 	}
 	
+	@Override
+	public int hashCode(){
+		return source.hashCode()*dest.hashCode();
+	}
+	
 	public void setSource(String source){
 		this.source=source;
 	}

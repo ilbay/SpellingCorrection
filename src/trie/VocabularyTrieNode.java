@@ -3,34 +3,34 @@ package trie;
 import java.util.List;
 import java.util.ArrayList;
 
-public class Node {
-	public Node(){
-		children=new ArrayList<Node>();
+public class VocabularyTrieNode {
+	public VocabularyTrieNode(){
+		children=new ArrayList<VocabularyTrieNode>();
 	}
 	
-	public Node(char chr){
+	public VocabularyTrieNode(char chr){
 		this.chr=chr;
-		children=new ArrayList<Node>();
+		children=new ArrayList<VocabularyTrieNode>();
 	}
 	
-	public Node(char chr,Node parent){
+	public VocabularyTrieNode(char chr,VocabularyTrieNode parent){
 		this.chr=chr;
 		this.parent=parent;
-		children=new ArrayList<Node>();
+		children=new ArrayList<VocabularyTrieNode>();
 	}
 
-	public Node(char chr,Node parent,boolean completed){
+	public VocabularyTrieNode(char chr,VocabularyTrieNode parent,boolean completed){
 		this.chr=chr;
 		this.parent=parent;
 		this.completed=completed;
-		children=new ArrayList<Node>();
+		children=new ArrayList<VocabularyTrieNode>();
 	}
 	
 	public void setChar(char chr){
 		this.chr=chr;
 	}
 	
-	public void setParent(Node parent){
+	public void setParent(VocabularyTrieNode parent){
 		this.parent=parent;
 	}
 	
@@ -38,10 +38,10 @@ public class Node {
 		this.completed=completed;
 	}
 
-	public void insertChild(Node node){
+	public void insertChild(VocabularyTrieNode node){
 		node.setParent(this);
 		int index=0;
-		for(Node c:children){
+		for(VocabularyTrieNode c:children){
 			if(c.getChar()<node.getChar()){
 				index++;
 			}else{
@@ -55,7 +55,7 @@ public class Node {
 		return chr;
 	}
 	
-	public Node getParent(){
+	public VocabularyTrieNode getParent(){
 		return parent;
 	}
 	
@@ -63,11 +63,11 @@ public class Node {
 		return completed;
 	}
 	
-	public List<Node> getChildren(){
+	public List<VocabularyTrieNode> getChildren(){
 		return children;
 	}
 	
-	public Node getChildren(int i)throws RuntimeException{
+	public VocabularyTrieNode getChildren(int i)throws RuntimeException{
 		if(i>=children.size())
 			throw new RuntimeException("Index out of bounds.");
 		return children.get(i);
@@ -75,14 +75,14 @@ public class Node {
 	
 	@Override
 	public boolean equals(Object o){
-		Node n=(Node)o;
+		VocabularyTrieNode n=(VocabularyTrieNode)o;
 		if(this.chr==n.chr)
 			return true;
 		return false;
 	}
 	
 	protected char chr;
-	protected Node parent;
-	protected List<Node> children;
+	protected VocabularyTrieNode parent;
+	protected List<VocabularyTrieNode> children;
 	protected boolean completed=false;
 }

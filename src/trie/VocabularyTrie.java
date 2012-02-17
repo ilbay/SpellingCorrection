@@ -2,20 +2,20 @@ package trie;
 
 import java.util.List;
 
-public class Trie {
-	public Trie(){
-		root=new Node();
+public class VocabularyTrie {
+	public VocabularyTrie(){
+		root=new VocabularyTrieNode();
 	}
 	
 	public void addString(String str)throws RuntimeException{
 		if(str.isEmpty())
 			throw new RuntimeException("String is empty.");
 
-		Node currentNode=root;
+		VocabularyTrieNode currentNode=root;
 		for(char c:str.toCharArray()){
-			Node childNode=getNodeFromNodeList(currentNode.getChildren(),c);
+			VocabularyTrieNode childNode=getNodeFromNodeList(currentNode.getChildren(),c);
 			if(childNode==null){
-				Node newNode=new Node(c);
+				VocabularyTrieNode newNode=new VocabularyTrieNode(c);
 				newNode.setParent(currentNode);
 				newNode.setCompleted(false);
 				currentNode.insertChild(newNode);
@@ -27,8 +27,8 @@ public class Trie {
 		currentNode.setCompleted(true);
 	}
 	
-	protected Node getNodeFromNodeList(List<Node> nodeList,char c){
-		for(Node n:nodeList){
+	protected VocabularyTrieNode getNodeFromNodeList(List<VocabularyTrieNode> nodeList,char c){
+		for(VocabularyTrieNode n:nodeList){
 			if(n.getChar()==c){
 				return n;
 			}
@@ -36,5 +36,5 @@ public class Trie {
 		return null;
 	}
 	
-	protected Node root;
+	protected VocabularyTrieNode root;
 }
