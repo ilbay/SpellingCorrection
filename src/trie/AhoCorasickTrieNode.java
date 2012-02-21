@@ -11,14 +11,14 @@ public class AhoCorasickTrieNode{
 	public AhoCorasickTrieNode(){
 		ruleList=new HashMap<String, Double>();
 		edges=new HashMap<Character, AhoCorasickTrieNode>();
-		outList=new HashSet<String>();
+		outList=new HashSet<AhoCorasickTrieNode>();
 	}
 	
 	public AhoCorasickTrieNode(char chr){
 		this.chr=chr;
 		ruleList=new HashMap<String, Double>();
 		edges=new HashMap<Character, AhoCorasickTrieNode>();
-		outList=new HashSet<String>();
+		outList=new HashSet<AhoCorasickTrieNode>();
 	}
 	
 	public void insertToRuleList(String dest,int frequency){
@@ -37,7 +37,11 @@ public class AhoCorasickTrieNode{
 		this.chr=chr;
 	}
 	
-	public void insertToOutList(String s){
+	public void setRuleSource(String ruleSource){
+		this.ruleSource=ruleSource;
+	}
+	
+	public void insertToOutList(AhoCorasickTrieNode s){
 		outList.add(s);
 	}
 	
@@ -70,10 +74,10 @@ public class AhoCorasickTrieNode{
 	
 	public boolean isCompleted(){
 		//return completed;
-		return (outList.size()!=0);
+		return (ruleSource!=null && !ruleSource.isEmpty());
 	}
 		
-	public Set<String> getOutList(){
+	public Set<AhoCorasickTrieNode> getOutList(){
 		return outList;
 	}
 	
@@ -81,9 +85,34 @@ public class AhoCorasickTrieNode{
 		return outList.toString();
 	}
 	
+	public String getRuleSource(){
+		return ruleSource;
+	}
+	
+	@Override
+	public boolean equals(Object o){
+		AhoCorasickTrieNode node=(AhoCorasickTrieNode)o;
+		if(node.chr==this.chr && node.ruleSource.equals(this.ruleSource))
+			return true;
+		return false;
+	}
+	
+	@Override
+	public int hashCode(){
+		return ruleSource.hashCode();
+	}
+	
+	@Override
+	public String toString(){
+		if(ruleSource!=null && !ruleSource.isEmpty())
+			return ruleSource;
+		return "";
+	}
+	
 	protected char chr;
 	protected Map<Character,AhoCorasickTrieNode> edges;
-	protected Set<String> outList;
+	protected Set<AhoCorasickTrieNode> outList; //String
 	protected AhoCorasickTrieNode failureChild;
 	protected Map<String,Double> ruleList;
+	protected String ruleSource;
 }

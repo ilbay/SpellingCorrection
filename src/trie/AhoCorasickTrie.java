@@ -40,7 +40,8 @@ public class AhoCorasickTrie{
 			}
 		}
 		currentNode.insertToRuleList(dest, frequency);
-		currentNode.insertToOutList(source);
+		currentNode.setRuleSource(source);
+		currentNode.insertToOutList(currentNode);
 	}
 	
 	public void completeTrie(){
@@ -80,6 +81,7 @@ public class AhoCorasickTrie{
 		
 	public List<AhoCorasickTrieNode> findRules(String word){
 		List<AhoCorasickTrieNode> ruleList=new ArrayList<AhoCorasickTrieNode>();
+		Set<AhoCorasickTrieNode> finalRuleSet=new HashSet<AhoCorasickTrieNode>();
 		AhoCorasickTrieNode currentNode=root;
 		for(char c:word.toCharArray()){
 			while(currentNode!=root && !currentNode.containsChild(c))
@@ -91,7 +93,13 @@ public class AhoCorasickTrie{
 			if(currentNode.isCompleted())
 				ruleList.add(currentNode);
 		}
-		return ruleList;
+		
+		for(AhoCorasickTrieNode node:ruleList){
+			for(AhoCorasickTrieNode nodeInOutList:node.getOutList())
+				finalRuleSet.add(nodeInOutList);
+		}
+		
+		return new ArrayList<AhoCorasickTrieNode>(finalRuleSet);
 	}
 	
 	//These two methods below are written to test whether AC trie works properly

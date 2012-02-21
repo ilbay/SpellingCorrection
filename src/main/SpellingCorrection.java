@@ -13,6 +13,7 @@ import rule.*;
 import trie.*;
 import java.util.Map;
 import java.util.HashMap;
+import tdk.*;
 
 public class SpellingCorrection{
 	
@@ -25,14 +26,35 @@ public class SpellingCorrection{
 		ahoCorasickTrie=new AhoCorasickTrie();
 		ruleList=new HashMap<Rule, Integer>();
 		try{
+			//Loads training data
 			this.loadTrainingData("deneme_training_data.txt");
+			
+			//generates rules
 			this.generateRules();
+			
+			//constructs AC Trie
 			this.constructAhoCorasickTrie();
-			List<AhoCorasickTrieNode> rules=ahoCorasickTrie.findRules("^nicosooft$");
-			for(AhoCorasickTrieNode node:rules){
-				Set<String> keyset=node.getList().keySet();
-				System.out.println(node.toOut());
+			
+			List<AhoCorasickTrieNode> ruleList=ahoCorasickTrie.findRules("nicosooft");
+			
+			//Loads TDK Word List
+			TDKReader tdkReader=new TDKReader("Maddeler3.txt");
+			List<TDKNode> tdkWordList=tdkReader.getTDKList();
+			
+			VocabularyTrie vocabularyTrie=new VocabularyTrie();
+			for(TDKNode tdkNode:tdkWordList){
+				vocabularyTrie.addString(tdkNode.getWord());
 			}
+			
+			String[] candidateList=vocabularyTrie.searchString("nicosooft", ruleList);
+			
+			for(String s:candidateList){
+				if(s!=null)
+					System.out.println(s);
+			}
+			
+			System.out.println("*****BITTI******");
+			
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}
@@ -84,6 +106,7 @@ public class SpellingCorrection{
 	private Set<WordPair> trainingWordSet;
 	private Map<Rule,Integer> ruleList;
 	private AhoCorasickTrie ahoCorasickTrie;
+	private VocabularyTrie vocabularyTrie;
 	
 	private class WordPair{
 		public WordPair(String misspelledWord,String correctWord){
